@@ -1,5 +1,6 @@
 ﻿using LogiTrack.OrderService.Application.DTOs;
 using LogiTrack.OrderService.Application.DTOs.Orders;
+using LogiTrack.OrderService.Application.DTOs.Shipments;
 using LogiTrack.OrderService.Application.Interfaces;
 using LogiTrack.OrderService.Application.Validators;
 using LogiTrack.OrderService.Domain.Entities;
@@ -15,12 +16,15 @@ public class OrderService : IOrderService
 
     private readonly IOrderRepository _orderRepository;
 
+    private readonly IShipmentClient _shipmentClient;
+
     public OrderService(
       OrderDbContext dbContext,
-      IOrderRepository orderRepository)
+      IOrderRepository orderRepository, IShipmentClient shipmentClient)
     {
         _dbContext = dbContext;
         _orderRepository = orderRepository;
+        _shipmentClient = shipmentClient;
     }
 
     public async Task<int> CreateOrderAsync(CreateOrderRequest request)
@@ -230,5 +234,29 @@ public class OrderService : IOrderService
         await _orderRepository.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<CreateShipmentResponse?> CreateShipmentForOrderAsync(
+    int orderId)
+    {
+        var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+        if (order == null)
+            return null;
+
+        var request = new CreateShipmentRequest
+        {
+            OrderId = order.OrderId,
+
+            OriginAddress = "Mumbai",
+            OriginCity = "Mumbai",
+            OriginState = "Maharashtra",
+
+            DestinationAddress = "Pune",
+            DestinationCity = "Pune",
+            DestinationState = "Maharashtra"
+        };
+
+        return await _shipmentClient.CreateShipmentAsync(request);
     }
 }

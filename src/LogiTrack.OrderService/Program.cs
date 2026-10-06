@@ -1,8 +1,9 @@
-using LogiTrack.OrderService.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using LogiTrack.OrderService.Application.Interfaces;
 using LogiTrack.OrderService.Application.Services;
+using LogiTrack.OrderService.Infrastructure.Clients;
+using LogiTrack.OrderService.Infrastructure.Data;
 using LogiTrack.OrderService.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddProblemDetails();
+builder.Services.AddHttpClient<IShipmentClient, ShipmentClient>(
+    client =>
+    {
+        client.BaseAddress = new Uri(
+            builder.Configuration["ShipmentService:BaseUrl"]!);
+
+        client.Timeout = TimeSpan.FromSeconds(10);
+    });
+
 
 var app = builder.Build();
 app.UseExceptionHandler();

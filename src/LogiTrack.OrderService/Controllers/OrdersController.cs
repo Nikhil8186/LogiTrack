@@ -78,5 +78,23 @@ public class OrdersController : ControllerBase
             Status = request.Status,
             Message = "Order status updated successfully."
         });
+
+    }
+
+    [HttpPost("{id:int}/shipment")]
+    public async Task<IActionResult> CreateShipment(int id)
+    {
+        var shipment =
+            await _orderService.CreateShipmentForOrderAsync(id);
+
+        if (shipment == null)
+        {
+            return NotFound(new
+            {
+                Message = "Order not found."
+            });
+        }
+
+        return Ok(shipment);
     }
 }
