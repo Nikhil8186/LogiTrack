@@ -97,8 +97,8 @@ public class ShipmentService : IShipmentService
     }
 
     public async Task<bool> UpdateStatusAsync(
-    int shipmentId,
-    UpdateShipmentStatusRequest request)
+      int shipmentId,
+      UpdateShipmentStatusRequest request)
     {
         var shipment =
             await _repository.GetByIdAsync(shipmentId);
