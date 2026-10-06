@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="src/LogiTrack.OrderService/LogiTrack.OrderService.csproj" />
+  <Project Path="src/LogiTrack.ShipmentService/LogiTrack.ShipmentService.csproj" />
 </Solution>
